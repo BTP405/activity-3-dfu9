@@ -14,23 +14,16 @@ def server():
         print(f'Client {client_addr} has connected!')
 
         try:
-            # read the message's length
             msg_length = int.from_bytes(client_socket.recv(4), byteorder='big')
             print(msg_length)
-            # read the pickled message
             raw_msg = client_socket.recv(msg_length)
-            # unpickle the message
             bytecode, args = marshal.loads(raw_msg)
             print('Bytecode: ', bytecode)
             print('Arguments: ', args)
             func = types.FunctionType(bytecode, globals(), 'count_even_odd')
-            # perform the task with given arguments
             result = func(*args)
-            # pickle the result
             serialized_result = pickle.dumps(result)
-            # send the result's length
             client_socket.send(len(serialized_result).to_bytes(4, byteorder='big'))
-            # send the pickled result
             client_socket.send(serialized_result)
         except Exception as e:
             print(f"Error processing task: {e}")
