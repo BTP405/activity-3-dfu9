@@ -20,17 +20,11 @@ def client():
     print('Connected to the server!')
 
     try:
-        # pickle the task along with its arguments
         serialized_msg = marshal.dumps((count_num.__code__, arguments))
-        # send the length of the message
         client_socket.send(len(serialized_msg).to_bytes(4, byteorder='big'))
-        # send the pickled message
         client_socket.send(serialized_msg)
-        # read the length of the result
         result_length = int.from_bytes(client_socket.recv(4), byteorder='big')
-        # read the pickled result
         raw_result = client_socket.recv(result_length)
-        # unpickle the result
         result = pickle.loads(raw_result)
         print(f'Result: ', result)
     except Exception as e:
